@@ -1,24 +1,35 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
-        in_memory: { memory: ~ }
+        main:
+            entity: {
+                class: App\Entity\Usuario,
+                property: email
+              }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
+            anonymous: ~
 
-            # activate different ways to authenticate
+            form_login:
+                login_path: login # Rota do formulario de Login
+                check_login: login # Rota onde vai verificar a autenticidade do usuario
+                default_target_path: default # Depois que autenticar, vai para essa rota
+                always_use_default_target_path: true # Toda vez que logar, ir para o target path
+                username_parameter: email # padrao: _username
+                password_parameter: senha # padrao: _password
 
-            # http_basic: true
-            # https://symfony.com/doc/current/security.html#a-configuring-how-your-users-will-authenticate
+            logout:
+                path: /usuario/logout
+                target: / # Depois de deslogar, para para essa rota
 
-            # form_login: true
-            # https://symfony.com/doc/current/security/form_login_setup.html
-
-    # Easy way to control access for large sections of your site
-    # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/usuario/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: painel, roles: ROLE_ADMIN }
+
+    encoders:
+        App\Entity\Usuario:
+            algorithm: bcrypt
+            cost: 12
