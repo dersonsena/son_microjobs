@@ -15,7 +15,7 @@ security:
 
             form_login:
                 login_path: login # Rota do formulario de Login
-                check_login: login # Rota onde vai verificar a autenticidade do usuario
+                check_path: login # Rota onde vai verificar a autenticidade do usuario
                 default_target_path: default # Depois que autenticar, vai para essa rota
                 always_use_default_target_path: true # Toda vez que logar, ir para o target path
                 username_parameter: email # padrao: _username
