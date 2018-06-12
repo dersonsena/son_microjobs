@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Usuario;
 use App\Form\UsuarioType;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,13 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class UsuariosController extends Controller
 {
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     /**
      * @Route("/usuarios", name="usuarios")
      */
@@ -26,8 +34,11 @@ class UsuariosController extends Controller
     /**
      * @Route("/usuarios/register", name="usuarios_register")
      * @Template("/usuarios/register.html.twig")
+     * @param Request $request
+     * @param \Swift_Mailer $mailer
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      */
-    public function create(Request $request)
+    public function create(Request $request, \Swift_Mailer $mailer)
     {
         $usuario = new Usuario;
         $form = $this->createForm(UsuarioType::class, $usuario);
@@ -40,12 +51,20 @@ class UsuariosController extends Controller
             $usuario->setToken(md5(uniqid()));
             $usuario->setRoles('ROLE_ADMIN');
 
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($usuario);
-            $entityManager->flush();
+            $this->entityManager->persist($usuario);
+            $this->entityManager->flush();
 
-            $this->addFlash('success', 'Seu cadastro foi criado com sucesso!');
+            $mensagem = (new \Swift_Message("{$usuario->getNome()}, ative sua conta no MicroJobs"))
+                ->setFrom('noreply@email.com')
+                ->setTo([$usuario->getEmail() => $usuario->getNome()])
+                ->setBody($this->renderView('emails/usuarios/registro.html.twig', [
+                    'nome' => $usuario->getNome(),
+                    'token' => $usuario->getToken()
+                ]), 'text/html');
 
+            $mailer->send($mensagem);
+
+            $this->addFlash('success', 'Cadastrado com sucesso! Verifique seu e-mail para completar o cadastro.');
             return $this->redirectToRoute('default');
         }
 
@@ -71,9 +90,28 @@ class UsuariosController extends Controller
 
     /**
      * @Route("/painel", name="painel")
+     * @Template("default/painel.html.twig")
      */
     public function painel()
     {
-        return new Response('<html><body>PAINEL</body></html>');
+        return [];
+    }
+
+    /**
+     * @Route("/usuarios/ativar-conta/{token}", name="email_ativar_conta")
+     */
+    public function ativarConta($token)
+    {
+        $usuario = $this->entityManager
+            ->getRepository(Usuario::class)
+            ->findOneBy(['token' => $token]);
+
+        $usuario->setStatus(true);
+
+        $this->entityManager->persist($usuario);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Seu cadastro foi ativado com sucesso! Informe seu e-mail e senha para entrar.');
+        return $this->redirectToRoute('login');
     }
 }

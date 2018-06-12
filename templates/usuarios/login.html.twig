@@ -13,6 +13,12 @@
         <hr />
 
         <form class="form-signin" method="post" action="">
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error.messageKey|trans(error.messageData, 'security') }}
+                </div>
+            {% endif %}
+
             <label for="email" class="sr-only">Endereço de E-mail</label>
             <input type="email" name="email" id="email" class="form-control" placeholder="Seu E-mail..." required autofocus>
 
