@@ -7,7 +7,6 @@ use App\Form\UsuarioType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -104,7 +103,12 @@ class UsuariosController extends Controller
     {
         $usuario = $this->entityManager
             ->getRepository(Usuario::class)
-            ->findOneBy(['token' => $token]);
+            ->findOneBy(['token' => $token, 'status' => 0]);
+
+        if (is_null($usuario)) {
+            $this->addFlash('danger', 'O Token informado é inválido!');
+            return $this->redirectToRoute('login');
+        }
 
         $usuario->setStatus(true);
 
