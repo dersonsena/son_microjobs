@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Usuario;
+use App\Form\UsuarioType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,6 +21,21 @@ class UsuariosController extends Controller
         return $this->render('usuarios/index.html.twig', [
             'controller_name' => 'UsuariosController',
         ]);
+    }
+
+    /**
+     * @Route("/usuarios/register", name="usuarios_register")
+     * @Template("/usuarios/register.html.twig")
+     */
+    public function create(Request $request)
+    {
+        $usuario = new Usuario;
+        $form = $this->createForm(UsuarioType::class, $usuario);
+        $form->handleRequest($request);
+
+        return [
+            'form' => $form->createView()
+        ];
     }
 
     /**

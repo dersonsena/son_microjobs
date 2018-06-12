@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Registre-se{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h3>Registre-se</h3>
+        <hr />
+
+        {% form_theme form with 'bootstrap_4_layout.html.twig' %}
+        {{ form_start(form) }}
+            {{ form_widget(form) }}
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
