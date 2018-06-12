@@ -24,13 +24,13 @@ class Usuario implements UserInterface
     /**
      * @ORM\Column(type="string", length=50)
      * @Assert\NotBlank(message="Campo nome não pode ser vazio")
-     * @Assert\Email(message="Informe um e-mail válido")
      */
     private $nome;
 
     /**
      * @ORM\Column(type="string", length=100)
      * @Assert\NotBlank(message="Campo e-mail não pode ser vazio")
+     * @Assert\Email(message="Informe um e-mail válido")
      */
     private $email;
 
@@ -142,7 +142,7 @@ class Usuario implements UserInterface
         return $this->data_cadastro;
     }
 
-    public function setDataCadastro(\DateTimeInterface $data_cadastro): self
+    public function setDataCadastro(?\DateTimeInterface $data_cadastro): self
     {
         $this->data_cadastro = $data_cadastro;
 
@@ -154,7 +154,7 @@ class Usuario implements UserInterface
         return $this->data_alteracao;
     }
 
-    public function setDataAlteracao(\DateTimeInterface $data_alteracao): self
+    public function setDataAlteracao(?\DateTimeInterface $data_alteracao): self
     {
         $this->data_alteracao = $data_alteracao;
 

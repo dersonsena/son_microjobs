@@ -33,6 +33,22 @@ class UsuariosController extends Controller
         $form = $this->createForm(UsuarioType::class, $usuario);
         $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            $encoder = $this->get('security.password_encoder');
+            $senhaCriptografada = $encoder->encodePassword($usuario, $form->getData()->getPassword());
+            $usuario->setSenha($senhaCriptografada);
+            $usuario->setToken(md5(uniqid()));
+            $usuario->setRoles('ROLE_ADMIN');
+
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($usuario);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Seu cadastro foi criado com sucesso!');
+
+            return $this->redirectToRoute('default');
+        }
+
         return [
             'form' => $form->createView()
         ];
