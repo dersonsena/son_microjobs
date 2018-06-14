@@ -68,4 +68,18 @@ class ServicosController extends Controller
             'form' => $form->createView()
         ];
     }
+
+    /**
+     * @Route("/painel/servicos/excluir/{id}", name="excluir_servico")
+     */
+    public function excluir(Servico $servico)
+    {
+        $servico->setStatus('E');
+
+        $this->entityManager->persist($servico);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'Micro Job foi excluído com sucesso.');
+        return $this->redirectToRoute('painel');
+    }
 }

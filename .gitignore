@@ -21,3 +21,6 @@ yarn-error.log
 .phpunit
 /phpunit.xml
 ###< symfony/phpunit-bridge ###
+
+# phpstorm project files
+.idea

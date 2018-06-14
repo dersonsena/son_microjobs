@@ -19,32 +19,35 @@ class ServicoRepository extends ServiceEntityRepository
         parent::__construct($registry, Servico::class);
     }
 
-//    /**
-//     * @return Servico[] Returns an array of Servico objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function findByUsuarioAndStatus($user, $status = null)
     {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $query = $this->createQueryBuilder('s')
+            ->where('s.usuario = :usuario')
+            ->setParameter('usuario', $user);
 
-    /*
-    public function findOneBySomeField($value): ?Servico
-    {
-        return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
+        if (!is_null($status)) {
+            $query->andWhere('s.status = :status')
+                ->setParameter('status', $status);
+        }
+
+        return $query->orderBy('s.data_cadastro', 'desc')
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getResult();
     }
-    */
+
+    public function findByListagem($busca = null, $limite = 16, $ordem = 'desc')
+    {
+        $query = $this->createQueryBuilder('s')
+            ->where("s.status = 'P'");
+
+        if (!is_null($busca)) {
+            $query->andWhere('s.titulo LIKE :busca')
+                ->setParameter('busca', '%' . $busca . '%');
+        }
+
+        return $query->setMaxResults($limite)
+            ->orderBy('s.data_cadastro', $ordem)
+            ->getQuery()
+            ->getResult();
+    }
 }

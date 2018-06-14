@@ -88,15 +88,6 @@ class UsuariosController extends Controller
     }
 
     /**
-     * @Route("/painel", name="painel")
-     * @Template("default/painel.html.twig")
-     */
-    public function painel()
-    {
-        return [];
-    }
-
-    /**
      * @Route("/usuarios/ativar-conta/{token}", name="email_ativar_conta")
      */
     public function ativarConta($token)
