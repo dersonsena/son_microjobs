@@ -37,9 +37,19 @@
             <div class="col-md-3">
                 <div class="list-group list-group-flush">
                     <a href="#" class="list-group-item list-group-item-action active">Meus microjobs</a>
-                    <a href="#" class="list-group-item list-group-item-action">Vendidos</a>
-                    <a href="#" class="list-group-item list-group-item-action">Rendimentos</a>
+
+                    {% if is_granted("ROLE_CLIENTE") %}
+                        <a href="{{ path('listar_compras') }}" class="list-group-item list-group-item-action">Compras</a>
+                    {% endif %}
+
+                    <a href="#" class="list-group-item list-group-item-action">Vendas</a>
                     <a href="#" class="list-group-item list-group-item-action">Dados Pessoais</a>
+
+                    {% if app.user.roles.0 == "ROLE_FREELA" %}
+                        <a href="{{ path('mudar_para_cliente') }}" class="list-group-item list-group-item-action bg-light text-danger">
+                            Torne-se um Cliente
+                        </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-md-9">

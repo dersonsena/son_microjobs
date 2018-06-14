@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Contratacoes;
 use App\Entity\Servico;
+use App\Entity\Usuario;
 use App\Form\ServicoType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -81,5 +83,56 @@ class ServicosController extends Controller
 
         $this->addFlash('success', 'Micro Job foi excluído com sucesso.');
         return $this->redirectToRoute('painel');
+    }
+
+    /**
+     * @Route("/contratar/{id}/{slug}", name="contratar_servico")
+     * @param Servico $servico
+     * @param UserInterface $user
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    public function contratarServico(Servico $servico, UserInterface $user)
+    {
+        $contratacao = new Contratacoes;
+        $contratacao->setValor($servico->getValor())
+            ->setServico($servico)
+            ->setCliente($user)
+            ->setFreelancer($servico->getUsuario())
+            ->setStatus('A');
+
+        $this->entityManager->persist($contratacao);
+        $this->entityManager->flush();
+
+        $this->get('email')->enviar(
+            "{$user->getNome()} - Contratação de Serviço",
+            [$user->getEmail() => $user->getNome()],
+            "emails/servicos/contratacao_cliente.html.twig",
+            ['servico' => $servico, 'cliente' => $user]
+        );
+
+        $this->get('email')->enviar(
+            "{$servico->getUsuario()->getNome()} - Parabéns!",
+            [$servico->getUsuario()->getEmail() => $servico->getUsuario()->getNome()],
+            "emails/servicos/contratacao_freelancer.html.twig",
+            ['servico' => $servico, 'cliente' => $user]
+        );
+
+        $this->addFlash('success', 'Serviço foi contratado!');
+        return $this->redirectToRoute('default');
+    }
+
+    /**
+     * @Route("/painel/servicos/listar-compras", name="listar_compras")
+     * @Template("servicos/listar-compras.html.twig")
+     */
+    public function listarCompras(UserInterface $user)
+    {
+        $usuario = $this->entityManager
+            ->getRepository(Usuario::class)
+            ->find($user);
+
+        return [
+            'compras' => $usuario->getCompras()
+        ];
     }
 }

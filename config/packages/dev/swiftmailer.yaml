@@ -1,7 +1,7 @@
 swiftmailer:
     transport: smtp
-    username: envioson@gmail.com
-    password: q!w@e#r$t%
+    username: noreply@imobsoft.com.br
+    password: 5XB9u<2=
     host: smtp.gmail.com
     encryption: ssl
     port: 465
