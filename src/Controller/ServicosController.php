@@ -135,4 +135,19 @@ class ServicosController extends Controller
             'compras' => $usuario->getCompras()
         ];
     }
+
+    /**
+     * @Route("/painel/servicos/listar-vendas", name="listar_vendas")
+     * @Template("servicos/listar-vendas.html.twig")
+     */
+    public function listarVendas(UserInterface $user)
+    {
+        $usuario = $this->entityManager
+            ->getRepository(Usuario::class)
+            ->find($user);
+
+        return [
+            'vendas' => $usuario->getVendas()
+        ];
+    }
 }

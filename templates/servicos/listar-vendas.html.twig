@@ -7,21 +7,21 @@
 {% endblock %}
 
 {% block body_painel %}
-    {% for compra in compras %}
+    {% for venda in vendas %}
         <div class="card mt-2">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-1">
-                        <img src="{{ asset(caminho_imagens_jobs ~ compra.servico.imagem) }}" alt="{{ compra.servico.titulo }}" width="60">
+                        <img src="{{ asset(caminho_imagens_jobs ~ venda.servico.imagem) }}" alt="{{ venda.servico.titulo }}" width="60">
                     </div>
                     <div class="col-md-5">
-                        <h5>{{ compra.servico.titulo }}</h5>
+                        <h5>{{ venda.servico.titulo }}</h5>
                     </div>
                     <div class="col-md-2">
-                        <p>{{ compra.servico.dataCadastro|date("d/m/Y") }}</p>
+                        <p>{{ venda.servico.dataCadastro|date("d/m/Y") }}</p>
                     </div>
                     <div class="col-md-3">
-                        <p>{{ compra.freelancer.nome }}</p>
+                        <p>{{ venda.freelancer.nome }}</p>
                     </div>
                     <div class="col-md-1">
                         {#<a href="" class="float-right btn btn-danger btn-sm"><i class="fa fa-trash-alt"></i></a>#}
