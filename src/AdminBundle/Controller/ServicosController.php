@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class ServicosController extends Controller
@@ -36,5 +37,43 @@ class ServicosController extends Controller
             'status' => $status,
             'microJobs' => $jobs
         ];
+    }
+
+    /**
+     * @Route("/publicar-job/{id}", name="admin_publicar_job")
+     * @param Servico $servico
+     * @return JsonResponse
+     */
+    public function publicarJob(Servico $servico)
+    {
+        $servico->setStatus('P');
+        $this->entityManager->persist($servico);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'servico' => [
+                'id' => $servico->getId()
+            ]
+        ]);
+    }
+
+    /**
+     * @Route("/rejeitar-job/{id}", name="admin_rejeitar_job")
+     * @param Servico $servico
+     * @return JsonResponse
+     */
+    public function rejeitarJob(Servico $servico)
+    {
+        $servico->setStatus('R');
+        $this->entityManager->persist($servico);
+        $this->entityManager->flush();
+
+        return new JsonResponse([
+            'success' => true,
+            'servico' => [
+                'id' => $servico->getId()
+            ]
+        ]);
     }
 }

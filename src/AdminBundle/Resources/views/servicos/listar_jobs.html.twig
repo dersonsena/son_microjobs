@@ -33,7 +33,7 @@
                     <div class="col-md-2">
                         <p>{{ job.dataCadastro|date('d/m/Y') }}</p>
                     </div>
-                    <div class="col-md-1">
+                    <div class="col-md-1" id="div_status_{{ job.id }}">
                         {% if job.status == "A" %}
                             <p class="badge badge-warning text-white">Em análise</p>
                         {% elseif job.status == "P" %}
@@ -53,15 +53,15 @@
                             <a href="{{ path("excluir_servico", {"id": job.id}) }}" class="float-right btn btn-danger btn-sm bt_excluir_servico">
                                 <i class="fa fa-trash-alt"></i>
                             </a>
-                            <a href="" class="float-right btn btn-success btn-sm mr-1">
+                            <a href="#" class="float-right btn btn-success btn-sm mr-1">
                                 <i class="fa fa-pencil-alt"></i>
                             </a>
                             {% if job.status == 'A' %}
                                 <div class="clearfix mb-2"></div>
-                                <a href="" class="float-right btn btn-primary btn-sm">
+                                <a href="{{ path('admin_publicar_job', {'id': job.id}) }}" data-botao="publicar_{{ job.id }}" class="btn_aprovar float-right btn btn-primary btn-sm">
                                     <i class="fa fa-check-circle"></i>
                                 </a>
-                                <a href="" class="float-right btn btn-warning btn-sm mr-1">
+                                <a href="{{ path('admin_rejeitar_job', {'id': job.id}) }}" data-botao="rejeitar_{{ job.id }}" class="btn_rejeitar float-right btn btn-warning btn-sm mr-1">
                                     <i class="fa fa-ban"></i>
                                 </a>
                             {% endif %}
@@ -77,5 +77,48 @@
             </div>
         </div>
     {% endfor %}
+{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        const $btnAprovar = document.querySelectorAll('a.btn_aprovar');
+        const $btnRejeitar = document.querySelectorAll('a.btn_rejeitar');
+
+        $btnAprovar.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                $.get(this.getAttribute('href'), (response) => {
+                    const $btn = this;
+                    const $btnRejeitar = document.querySelector("a.btn_rejeitar[data-botao='rejeitar_"+ response.servico.id +"']");
+                    const $divStatus = document.querySelector('div#div_status_' + response.servico.id);
+
+                    $btn.parentNode.removeChild($btn);
+                    $btnRejeitar.parentNode.removeChild($btnRejeitar);
+                    $divStatus.innerHTML = '<p class="badge badge-success text-white">Publicado</p>';
+
+                    alert('Job aprovado com sucesso!');
+                }, 'json');
+            });
+        });
+
+        $btnRejeitar.forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                $.get(this.getAttribute('href'), (response) => {
+                    const $btn = this;
+                    const $btnPublicar = document.querySelector("a.btn_aprovar[data-botao='publicar_"+ response.servico.id +"']");
+                    const $divStatus = document.querySelector('div#div_status_' + response.servico.id);
+
+                    $btn.parentNode.removeChild($btn);
+                    $btnPublicar.parentNode.removeChild($btnPublicar);
+                    $divStatus.innerHTML = '<p class="badge badge-dark text-white">Rejeitado</p>';
+
+                    alert('Job rejeitado com sucesso!');
+                }, 'json');
+            });
+        });
+    </script>
 {% endblock %}
 
