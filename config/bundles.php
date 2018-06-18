@@ -15,4 +15,6 @@ return [
     Symfony\Bundle\DebugBundle\DebugBundle::class => ['dev' => true, 'test' => true],
     Symfony\Bundle\MakerBundle\MakerBundle::class => ['dev' => true],
     Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle::class => ['all' => true],
+    App\AdminBundle\AdminBundle::class => ['all' => true],
+    Core23\DompdfBundle\Core23DompdfBundle::class => ['all' => true],
 ];

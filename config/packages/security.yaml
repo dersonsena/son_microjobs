@@ -15,10 +15,9 @@ security:
             form_login:
                 login_path: login # Rota do formulario de Login
                 check_path: login # Rota onde vai verificar a autenticidade do usuario
-                default_target_path: painel # Depois que autenticar, vai para essa rota
-                always_use_default_target_path: true # Toda vez que logar, ir para o target path
                 username_parameter: email # padrao: _username
                 password_parameter: senha # padrao: _password
+                success_handler: redirecionar_login
 
             logout:
                 path: /usuario/logout
@@ -26,7 +25,8 @@ security:
 
     access_control:
         - { path: ^/usuario/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: painel, roles: ROLE_FREELA }
+        - { path: ^/painel, roles: ROLE_FREELA }
+        - { path: ^/admin, roles: ROLE_ADMIN }
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_CLIENTE

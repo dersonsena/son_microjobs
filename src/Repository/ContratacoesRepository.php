@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Contratacoes;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use PDO;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -19,32 +20,18 @@ class ContratacoesRepository extends ServiceEntityRepository
         parent::__construct($registry, Contratacoes::class);
     }
 
-//    /**
-//     * @return Contratacoes[] Returns an array of Contratacoes objects
-//     */
-    /*
-    public function findByExampleField($value)
+    public function retornarFaturamento()
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $sql = "
+            SELECT SUM(valor) AS faturamento, data_cadastro
+            FROM contratacoes
+            GROUP BY MONTH(data_cadastro)
+            ORDER BY data_cadastro DESC
+        ";
 
-    /*
-    public function findOneBySomeField($value): ?Contratacoes
-    {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return $this->getEntityManager()
+            ->getConnection()
+            ->executeQuery($sql)
+            ->fetchAll(PDO::FETCH_OBJ);
     }
-    */
 }

@@ -31,3 +31,7 @@ services:
     email:
         class: App\Service\Email
         public: true
+
+    redirecionar_login:
+        class: App\Service\RedirecionarLogin
+        arguments: ['@router']

@@ -1,0 +1,23 @@
+<h3>Relatório de Faturamento Mensal</h3>
+<hr />
+
+<table class="table striped table-hover mt-3" style="width: 100%; border: 1px solid #999">
+    <thead>
+        <tr>
+            <th>Período</th>
+            <th>Valor (R$)</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for row in faturamento %}
+        <tr>
+            <td>{{ row.data_cadastro|date("m/Y") }}</td>
+            <td>R$ {{ row.faturamento|number_format(2, ",", ".") }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="2" class="table-info">Nenhum registro de faturamento</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
