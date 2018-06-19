@@ -1,0 +1,18 @@
+liip_imagine:
+  resolvers:
+    default:
+      web_path: ~
+
+  loaders:
+    profile_foto:
+      filesystem:
+        data_root:
+          - '%kernel.project_dir%/public/uploads/perfil'
+
+  filter_sets:
+    cache: ~
+    thumb_perfil:
+      data_loader: profile_foto
+      quality: 80
+      filters:
+        thumbnail: { size: [120, 90], mode: inset }

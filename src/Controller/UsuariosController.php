@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Usuario;
+use App\Form\UsuarioDadosPessoaisType;
 use App\Form\UsuarioType;
 use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -140,5 +141,32 @@ class UsuariosController extends Controller
 
         $this->addFlash('success', 'Seu perfil foi alterado para cliente.');
         return $this->redirectToRoute('painel');
+    }
+
+    /**
+     * @Route("/painel/usuarios/dados-pessoais", name="dados_pessoais")
+     * @Template("usuarios/dados-pessoais.html.twig")
+     */
+    public function dadosPessoais(UserInterface $user, Request $request)
+    {
+        $usuario = $this->entityManager
+            ->getRepository(Usuario::class)
+            ->find($user);
+
+        $form = $this->createForm(UsuarioDadosPessoaisType::class, $usuario);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $usuario->getDadosPessoais()->setDataAlteracao(new \DateTime);
+            $this->entityManager->persist($usuario);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Dados pessoais foram atualizados com sucesso.');
+            return $this->redirectToRoute('painel');
+        }
+
+        return [
+            'form' => $form->createView()
+        ];
     }
 }
